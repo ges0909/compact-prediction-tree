@@ -8,7 +8,6 @@ public class Sequence<T> {
 
     private List<T> symbols;
 
-    @SafeVarargs
     public Sequence(T... symbols) {
         this.symbols = new LinkedList<>(Arrays.asList(symbols));
     }
@@ -29,7 +28,7 @@ public class Sequence<T> {
         return this.symbols.get(0);
     }
 
-     void insert(T symbol) {
+    void insert(T symbol) {
         this.symbols.add(0, symbol);
     }
 }

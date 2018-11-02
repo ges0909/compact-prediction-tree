@@ -50,9 +50,9 @@ class PredictorTest {
     @Test
     void createPredictorAndTrainingSequence() {
         Predictor<Integer> predictor = new Predictor<>();
-        predictor.addToPredictionTree(new Sequence<>(1, 1, 2, 3));
-        predictor.addToPredictionTree(new Sequence<>(1, 1, 3, 4));
-        predictor.addToPredictionTree(new Sequence<>(2, 5, 1, 7, 8, 9));
+        predictor.addSequenceToPredictionTree(new Sequence<>(1, 1, 2, 3));
+        predictor.addSequenceToPredictionTree(new Sequence<>(1, 1, 3, 4));
+        predictor.addSequenceToPredictionTree(new Sequence<>(2, 5, 1, 7, 8, 9));
     }
 
     @Test

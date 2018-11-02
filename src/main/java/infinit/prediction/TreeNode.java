@@ -10,9 +10,9 @@ public class TreeNode<T> {
     private T symbol;
 
     TreeNode() {
-        this.parent = null;
-        this.children = new ArrayList<>();
-        this.symbol = null;
+        parent = null;
+        children = new ArrayList<>();
+        symbol = null;
     }
 
     public TreeNode(T symbol) {
@@ -21,11 +21,11 @@ public class TreeNode<T> {
     }
 
     public boolean isRoot() {
-        return this.parent == null;
+        return parent == null;
     }
 
     TreeNode<T> getParent() {
-        return this.parent;
+        return parent;
     }
 
     void setParent(TreeNode<T> parent) {
@@ -33,14 +33,14 @@ public class TreeNode<T> {
     }
 
     public T getSymbol() {
-        return this.symbol;
+        return symbol;
     }
 
     public boolean addChild(TreeNode<T> child) {
-        return this.children.add(child);
+        return children.add(child);
     }
 
     public List<TreeNode<T>> getChildren() {
-        return this.children;
+        return children;
     }
 }
