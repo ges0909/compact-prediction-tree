@@ -1,0 +1,44 @@
+# Gradle
+.gradle/
+build/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# Java 
+*.class
+*.jar
+
+# IntelliJ IDEA
+out/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# Project
+spmf/ca/pfv/spmf/algorithmmanager/
+spmf/ca/pfv/spmf/datastructures/
+spmf/ca/pfv/spmf/documentation/
+spmf/ca/pfv/spmf/gui/
+spmf/ca/pfv/spmf/input/
+spmf/ca/pfv/spmf/patterns/
+spmf/ca/pfv/spmf/test/
+spmf/ca/pfv/spmf/tools/
+spmf/ca/pfv/spmf/welwindow/
+spmf/ca/pfv/spmf/algorithms/associationrules
+spmf/ca/pfv/spmf/algorithms/classifiers
+spmf/ca/pfv/spmf/algorithms/clustering
+spmf/ca/pfv/spmf/algorithms/episodes
+spmf/ca/pfv/spmf/algorithms/frequentpatterns/
+spmf/ca/pfv/spmf/algorithms/sequential_rules/
+spmf/ca/pfv/spmf/algorithms/sequentialpatterns/
+spmf/ca/pfv/spmf/algorithms/sort/
+spmf/ca/pfv/spmf/algorithms/timeseries/
+spmf/ca/pfv/spmf/algorithms/*.java
