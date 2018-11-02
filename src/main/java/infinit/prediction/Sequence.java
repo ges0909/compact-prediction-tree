@@ -14,7 +14,7 @@ public class Sequence<T> {
     }
 
     List<T> getSymbols() {
-        return symbols;
+        return this.symbols;
     }
 
     public boolean isEmpty() {

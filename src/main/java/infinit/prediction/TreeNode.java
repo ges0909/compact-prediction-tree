@@ -3,19 +3,19 @@ package infinit.prediction;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Treenode<T> {
+public class TreeNode<T> {
 
-    private Treenode<T> parent;
-    private List<Treenode<T>> children;
+    private TreeNode<T> parent;
+    private List<TreeNode<T>> children;
     private T symbol;
 
-    Treenode() {
+    TreeNode() {
         this.parent = null;
         this.children = new ArrayList<>();
         this.symbol = null;
     }
 
-    public Treenode(T symbol) {
+    public TreeNode(T symbol) {
         this();
         this.symbol = symbol;
     }
@@ -24,11 +24,11 @@ public class Treenode<T> {
         return this.parent == null;
     }
 
-    Treenode<T> getParent() {
+    TreeNode<T> getParent() {
         return this.parent;
     }
 
-    void setParent(Treenode<T> parent) {
+    void setParent(TreeNode<T> parent) {
         this.parent = parent;
     }
 
@@ -36,11 +36,11 @@ public class Treenode<T> {
         return this.symbol;
     }
 
-    public boolean addChild(Treenode<T> child) {
+    public boolean addChild(TreeNode<T> child) {
         return this.children.add(child);
     }
 
-    public List<Treenode<T>> getChildren() {
+    public List<TreeNode<T>> getChildren() {
         return this.children;
     }
 }
