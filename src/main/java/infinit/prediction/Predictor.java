@@ -78,7 +78,9 @@ public class Predictor<T> {
             int startIndex = Collections.indexOfSubList(branch.getSymbols(), testSequence.getSymbols());
             if (startIndex > -1) {
                 int nextIndex = startIndex + testSequence.getSymbols().size();
-                prediction.add(branch.getSymbols().get(nextIndex));
+                if (nextIndex < (branch.getSymbols().size()-1)) {
+                    prediction.add(branch.getSymbols().get(nextIndex));
+                }
             }
         }
         return prediction;

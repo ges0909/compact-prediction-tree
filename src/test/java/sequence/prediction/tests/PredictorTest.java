@@ -67,4 +67,17 @@ class PredictorTest {
         assertEquals(3, prediction.get(0).intValue());
         assertEquals(1, prediction.get(1).intValue());
     }
+
+    @Test
+    void check2() {
+        Predictor<String> predictor = new Predictor<>();
+        List<Sequence<String>> trainingSet = Arrays.asList(
+                new Sequence<>("A", "B", "C", "D"),
+                new Sequence<>("B", "C"),
+                new Sequence<>("C", "D")
+        );
+        predictor.addTrainingSequences(trainingSet);
+        List<String> prediction = predictor.predict(new Sequence("C"));
+        assertEquals("D", prediction.get(0));
+    }
 }
