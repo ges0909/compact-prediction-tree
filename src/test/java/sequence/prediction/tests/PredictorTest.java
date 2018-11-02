@@ -5,6 +5,7 @@ import infinit.prediction.Sequence;
 import infinit.prediction.Treenode;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,15 +49,22 @@ class PredictorTest {
     @Test
     void createPredictorAndTrainingSequence() {
         Predictor<Integer> predictor = new Predictor<>();
-        predictor.addTrainingSequence(new Sequence<>(1, 1, 2, 3));
-        predictor.addTrainingSequence(new Sequence<>(1, 1, 3, 4));
-        predictor.addTrainingSequence(new Sequence<>(2, 5, 1, 7, 8, 9));
+        predictor.addToPredictionTree(new Sequence<>(1, 1, 2, 3));
+        predictor.addToPredictionTree(new Sequence<>(1, 1, 3, 4));
+        predictor.addToPredictionTree(new Sequence<>(2, 5, 1, 7, 8, 9));
     }
 
     @Test
-    void checkOnLastNode() {
+    void check() {
         Predictor<Integer> predictor = new Predictor<>();
-        Treenode<Integer> node = predictor.addTrainingSequence(new Sequence<>(1, 1, 2, 3));
-        assertEquals(3, node.getSymbol().intValue());
+        List<Sequence<Integer>> trainingSet = Arrays.asList(
+                new Sequence<>(1, 1, 2, 1, 1, 1, 3),
+                new Sequence<>(1, 1, 2, 1, 1, 1, 1),
+                new Sequence<>(0, 9, 8, 7, 6, 5, 4)
+        );
+        predictor.addTrainingSequences(trainingSet);
+        List<Integer> prediction = predictor.predict(new Sequence(2, 1, 1, 1));
+        assertEquals(3, prediction.get(0).intValue());
+        assertEquals(1, prediction.get(1).intValue());
     }
 }

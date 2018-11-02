@@ -24,11 +24,11 @@ public class Treenode<T> {
         return this.parent == null;
     }
 
-    public Treenode<T> getParent() {
+    Treenode<T> getParent() {
         return this.parent;
     }
 
-    public void setParent(Treenode<T> parent) {
+    void setParent(Treenode<T> parent) {
         this.parent = parent;
     }
 
