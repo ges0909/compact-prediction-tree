@@ -52,4 +52,11 @@ class PredictorTest {
         predictor.addTrainingSequence(new Sequence<>(1, 1, 3, 4));
         predictor.addTrainingSequence(new Sequence<>(2, 5, 1, 7, 8, 9));
     }
+
+    @Test
+    void checkOnLastNode() {
+        Predictor<Integer> predictor = new Predictor<>();
+        Treenode<Integer> node = predictor.addTrainingSequence(new Sequence<>(1, 1, 2, 3));
+        assertEquals(3, node.getSymbol().intValue());
+    }
 }

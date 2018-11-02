@@ -3,15 +3,23 @@ package infinit.prediction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Sequence<T> {
 
     private List<T> symbols;
+    private int lookupTableIndex;
 
     @SafeVarargs
     public Sequence(T... symbols) {
         this.symbols = new ArrayList<>(Arrays.asList(symbols));
+    }
+
+    public int getLookupTableIndex() {
+        return lookupTableIndex;
+    }
+
+    public void setLookupTableIndex(int lookupTableIndex) {
+        this.lookupTableIndex = lookupTableIndex;
     }
 
     public boolean isEmpty() {

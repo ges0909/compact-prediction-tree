@@ -43,26 +43,4 @@ public class Treenode<T> {
     public List<Treenode<T>> getChildren() {
         return this.children;
     }
-
-    void addSequence(Sequence<T> sequence) {
-        addSequence(this, sequence);
-    }
-
-    private void addSequence(Treenode<T> root, Sequence<T> sequence) {
-        if (sequence.isEmpty()) {
-            return;
-        }
-        T symbol = sequence.getFirstSymbol();
-        for (Treenode<T> node : root.getChildren()) {
-            if (node.getSymbol().equals(symbol)) {
-                addSequence(node, sequence.copyWithoutFirstSymbol());
-                return;
-            }
-        }
-        // create new node
-        Treenode<T> node = new Treenode<>(symbol);
-        node.setParent(root);
-        root.addChild(node);
-        addSequence(node, sequence.copyWithoutFirstSymbol());
-    }
 }

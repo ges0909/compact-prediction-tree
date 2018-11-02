@@ -13,11 +13,28 @@ public class Predictor<T> {
         predictionTree = new Treenode<>();
     }
 
-    public void addTrainingSequence(Sequence<T> sequence) {
-        predictionTree.addSequence(sequence);
+    public Treenode<T> addTrainingSequence(Sequence<T> sequence) {
+        return addSequence(sequence, predictionTree);
     }
 
     public void addTrainingSequences(List<Sequence<T>> sequences) {
         sequences.forEach(this::addTrainingSequence);
+    }
+
+    private Treenode<T> addSequence(Sequence<T> sequence, Treenode<T> root) {
+        if (sequence.isEmpty()) {
+            return root; /*may be last eaf*/
+        }
+        T symbol = sequence.getFirstSymbol();
+        for (Treenode<T> node : root.getChildren()) {
+            if (node.getSymbol().equals(symbol)) {
+                return addSequence(sequence.copyWithoutFirstSymbol(), node);
+            }
+        }
+        // create new node
+        Treenode<T> node = new Treenode<>(symbol);
+        node.setParent(root);
+        root.addChild(node);
+        return addSequence(sequence.copyWithoutFirstSymbol(), node);
     }
 }
