@@ -24,12 +24,8 @@ public class Sequence<T> {
         return this.symbols.isEmpty();
     }
 
-    Sequence<T> copyWithoutFirstSymbol() {
-        return new Sequence(symbols.stream().skip(1).toArray());
-    }
-
-    public T getFirstSymbol() {
-        return symbols.get(0);
+    public T getSymbol(int index) {
+        return symbols.get(index);
     }
 
     void insert(T symbol) {

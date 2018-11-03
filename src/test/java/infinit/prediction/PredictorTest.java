@@ -22,7 +22,7 @@ class PredictorTest {
                 new Sequence<>(1, 1, 2, 1, 1, 1, 1),
                 new Sequence<>(0, 9, 8, 7, 6, 5, 4)
         );
-        predictor.addTrainingSequences(trainingSet);
+        predictor.train(trainingSet);
         Map<Integer, Double> predictions = predictor.predict(new Sequence<>(2, 1, 1, 1));
         assertThat(predictions.get(1), greaterThan(0.33));
         assertThat(predictions.get(3), greaterThan(0.66));
@@ -36,7 +36,7 @@ class PredictorTest {
                 new Sequence<>("B", "E", "B", "E", "B", "E", "B", "E", "B", "E", "B", "E", "B", "E", "B", "E"),
                 new Sequence<>("C", "D", "F")
         );
-        predictor.addTrainingSequences(trainingSet);
+        predictor.train(trainingSet);
         Map<String, Double> predictions = predictor.predict(new Sequence<>("C", "D"));
         assertThat(predictions.size(), is(2));
         assertThat(predictions.get("E"), is(0.5));
@@ -53,7 +53,7 @@ class PredictorTest {
                 new Sequence<>("B", "C"),
                 new Sequence<>("B", "D", "E")
         );
-        predictor.addTrainingSequences(trainingSet);
+        predictor.train(trainingSet);
         Map<String, Double> predictions = predictor.predict(new Sequence<>("A", "B"));
         assertThat(predictions.size(), is(2));
         assertThat(predictions.get("C"), is(0.5));
@@ -64,11 +64,11 @@ class PredictorTest {
     void bigPredictionTree() {
         Predictor<Integer> predictor = new Predictor<>();
         List<Sequence<Integer>> trainingSet = Arrays.asList(
-                new Sequence<>(IntStream.range(1, 1000).boxed().toArray(Integer[]::new)),
-                new Sequence<>(IntStream.range(512, 5000).boxed().toArray(Integer[]::new)),
+                new Sequence<>(IntStream.range(1, 10000).boxed().toArray(Integer[]::new)),
+                new Sequence<>(IntStream.range(512, 150000).boxed().toArray(Integer[]::new)),
                 new Sequence<>(IntStream.range(12, 997).boxed().toArray(Integer[]::new))
         );
-        predictor.addTrainingSequences(trainingSet);
+        predictor.train(trainingSet);
         Map<Integer, Double> predictions = predictor.predict(
                 new Sequence<>(990, 991, 992, 993, 994, 995, 996, 997, 998));
         assertThat(predictions.size(), is(1));

@@ -15,10 +15,14 @@ public class Predictor<T> {
         lookupTable = new HashMap<>();
     }
 
-    private void addSequenceToPredictionTree(Sequence<T> sequence) {
+    public void train(List<Sequence<T>> sequences) {
+        sequences.forEach(this::train);
+    }
+
+    private void train(Sequence<T> sequence) {
         int uniqueSequenceId = lookupTable.size(); // is used as index for lookup table, therefore has to start with 0
         // add training sequence to prediction tree
-        TreeNode<T> lastNode = addSequenceToPredictionTree(sequence, predictionTree);
+        TreeNode<T> lastNode = addTrainingSequence(sequence);
         // store mapping symbol to sequences containing it
         for (T symbol : sequence.getSymbols()) {
             invertedIndex.putIfAbsent(symbol, new HashSet<>());
@@ -28,26 +32,27 @@ public class Predictor<T> {
         lookupTable.put(uniqueSequenceId, lastNode);
     }
 
-    public void addTrainingSequences(List<Sequence<T>> sequences) {
-        sequences.forEach(this::addSequenceToPredictionTree);
+    private TreeNode<T> addTrainingSequence(Sequence<T> sequence) {
+        TreeNode<T> root = predictionTree;
+        for (T symbol : sequence.getSymbols()) {
+            TreeNode<T> node = find(root, symbol);
+            if (node == null) {
+                node = new TreeNode<>(symbol);
+                root.addChild(node);
+                node.setParent(root);
+            }
+            root = node;
+        }
+        return root;
     }
 
-    private TreeNode<T> addSequenceToPredictionTree(Sequence<T> sequence, TreeNode<T> subTreeNode) {
-        if (sequence.isEmpty()) {
-            return subTreeNode;
-        }
-        T symbol = sequence.getFirstSymbol();
-        // traverse prediction tree along already existing nodes top-down or ...
-        for (TreeNode<T> node : subTreeNode.getChildren()) {
+    private TreeNode<T> find(TreeNode<T> root, T symbol) {
+        for (TreeNode<T> node : root.getChildren()) {
             if (node.getSymbol().equals(symbol)) {
-                return addSequenceToPredictionTree(sequence.copyWithoutFirstSymbol(), node);
+                return node;
             }
         }
-        // ... create a new node for the symbol
-        TreeNode<T> node = new TreeNode<>(symbol);
-        subTreeNode.addChild(node);
-        node.setParent(subTreeNode);
-        return addSequenceToPredictionTree(sequence.copyWithoutFirstSymbol(), node);
+        return null;
     }
 
     public Map<T, Double> predict(Sequence<T> testSequence) {
