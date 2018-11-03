@@ -1,6 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'idea'
 
+group = 'infinit'
+version = '0.0.1-SNAPSHOT'
+
+sourceCompatibility = 1.9
+
 dependencies {
     // hamcrest MUST (!!!) be inserted before junit dependencies
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
@@ -17,3 +22,5 @@ test {
     // enable JUnit Platform (a.k.a. JUnit 5) support
     useJUnitPlatform()
 }
+
+defaultTasks 'clean', 'test'

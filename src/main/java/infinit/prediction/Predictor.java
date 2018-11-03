@@ -33,26 +33,19 @@ public class Predictor<T> {
     }
 
     private TreeNode<T> addTrainingSequence(Sequence<T> sequence) {
-        TreeNode<T> root = predictionTree;
-        for (T symbol : sequence.getSymbols()) {
-            TreeNode<T> node = find(root, symbol);
-            if (node == null) {
-                node = new TreeNode<>(symbol);
-                root.addChild(node);
-                node.setParent(root);
-            }
-            root = node;
-        }
-        return root;
+        TreeNode<T> node = predictionTree;
+        for (T symbol : sequence.getSymbols())
+            node = find(node, symbol).orElse(new TreeNode<>(node, symbol));
+        return node;
     }
 
-    private TreeNode<T> find(TreeNode<T> root, T symbol) {
+    private Optional<TreeNode<T>> find(TreeNode<T> root, T symbol) {
         for (TreeNode<T> node : root.getChildren()) {
             if (node.getSymbol().equals(symbol)) {
-                return node;
+                return Optional.of(node);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public Map<T, Double> predict(Sequence<T> testSequence) {
@@ -62,28 +55,28 @@ public class Predictor<T> {
         Set<Integer> similarSequenceIndexes = new HashSet<>();
         for (T symbol : uniqueTestSymbols) similarSequenceIndexes.addAll(invertedIndex.get(symbol));
         // traverse prediction tree from bottom to top to collect branches containing test sequence potentially
-        List<Sequence<T>> branches = new ArrayList<>();
-        for (Integer uniqueSequenceId : similarSequenceIndexes) {
-            Sequence<T> branch = new Sequence<>();
-            for (TreeNode<T> node = lookupTable.get(uniqueSequenceId); !node.isRoot(); node = node.getParent())
-                branch.insert(node.getSymbol());
+        List<List<T>> branches = new LinkedList<>();
+        for (Integer sequenceId : similarSequenceIndexes) {
+            List<T> branch = new LinkedList<>();
+            for (TreeNode<T> node = lookupTable.get(sequenceId); !node.isRoot(); node = node.getParent())
+                branch.add(0, node.getSymbol());
             branches.add(branch);
         }
-        // find first occurrence of complete test sequence in branches
+        // find first occurrence of test sequence in branches
         Map<T, Double> predictions = new HashMap<>();
-        for (Sequence<T> branch : branches) {
-            int startIndex = Collections.indexOfSubList(branch.getSymbols(), testSequence.getSymbols());
-            if (startIndex > -1 /*found*/) {
-                int behindIndex = startIndex + testSequence.getSymbols().size();
-                if (behindIndex < branch.getSymbols().size()) {
-                    T symbol = branch.getSymbols().get(behindIndex);
+        for (List<T> branch : branches) {
+            int startIdx = Collections.indexOfSubList(branch, testSequence.getSymbols());
+            if (startIdx > -1 /*found*/) {
+                int behindIdx = startIdx + testSequence.getSymbols().size();
+                if (behindIdx < branch.size()) {
+                    T symbol = branch.get(behindIdx);
                     predictions.putIfAbsent(symbol, 0d /*initialize counter*/);
                     predictions.computeIfPresent(symbol, (s, v) -> v + 1d /*increment counter*/);
                 }
             }
         }
-        // transform counter to score
-        double counterSum = predictions.values().stream().mapToDouble(Double::doubleValue).sum();
-        return predictions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue() / counterSum));
+        // transform counters to scores
+        double sum = predictions.values().stream().mapToDouble(Double::doubleValue).sum();
+        return predictions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue() / sum));
     }
 }

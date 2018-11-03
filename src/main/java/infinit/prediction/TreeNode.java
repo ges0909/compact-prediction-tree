@@ -3,20 +3,20 @@ package infinit.prediction;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TreeNode<T> {
+public final class TreeNode<T> {
 
     private TreeNode<T> parent;
     private List<TreeNode<T>> children;
     private T symbol;
 
-    public TreeNode() {
-        parent = null;
+    protected TreeNode() {
         children = new ArrayList<>();
-        symbol = null;
     }
 
-    public TreeNode(T symbol) {
+    public TreeNode(TreeNode<T> root, T symbol) {
         this();
+        parent = root;
+        root.addChild(this);
         this.symbol = symbol;
     }
 
@@ -28,16 +28,12 @@ public class TreeNode<T> {
         return parent;
     }
 
-    public void setParent(TreeNode<T> parent) {
-        this.parent = parent;
-    }
-
     public T getSymbol() {
         return symbol;
     }
 
-    public boolean addChild(TreeNode<T> child) {
-        return children.add(child);
+    public void addChild(TreeNode<T> child) {
+        children.add(child);
     }
 
     public List<TreeNode<T>> getChildren() {

@@ -64,8 +64,8 @@ class PredictorTest {
     void bigPredictionTree() {
         Predictor<Integer> predictor = new Predictor<>();
         List<Sequence<Integer>> trainingSet = Arrays.asList(
-                new Sequence<>(IntStream.range(1, 10000).boxed().toArray(Integer[]::new)),
-                new Sequence<>(IntStream.range(512, 150000).boxed().toArray(Integer[]::new)),
+                new Sequence<>(IntStream.range(1, 10_000).boxed().toArray(Integer[]::new)),
+                new Sequence<>(IntStream.range(512, 1_000_000).boxed().toArray(Integer[]::new)),
                 new Sequence<>(IntStream.range(12, 997).boxed().toArray(Integer[]::new))
         );
         predictor.train(trainingSet);
