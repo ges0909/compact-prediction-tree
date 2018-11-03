@@ -8,12 +8,16 @@ public class Sequence<T> {
 
     private List<T> symbols;
 
+    public Sequence() {
+        symbols = new LinkedList<>();
+    }
+
     public Sequence(T... symbols) {
         this.symbols = new LinkedList<>(Arrays.asList(symbols));
     }
 
     List<T> getSymbols() {
-        return this.symbols;
+        return symbols;
     }
 
     public boolean isEmpty() {
@@ -21,14 +25,14 @@ public class Sequence<T> {
     }
 
     Sequence<T> copyWithoutFirstSymbol() {
-        return new Sequence(this.symbols.stream().skip(1).toArray());
+        return new Sequence(symbols.stream().skip(1).toArray());
     }
 
     public T getFirstSymbol() {
-        return this.symbols.get(0);
+        return symbols.get(0);
     }
 
     void insert(T symbol) {
-        this.symbols.add(0, symbol);
+        symbols.add(0, symbol);
     }
 }
