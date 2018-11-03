@@ -1,12 +1,11 @@
 package infinit.prediction;
 
-import infinit.prediction.Predictor;
-import infinit.prediction.Sequence;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
@@ -45,7 +44,7 @@ class PredictorTest {
     }
 
     @Test
-    void predictConferenceDataSet() {
+    void predictPowerpointDataSet() {
         Predictor<String> predictor = new Predictor<>();
         List<Sequence<String>> trainingSet = Arrays.asList(
                 new Sequence<>("A", "B", "C"),
@@ -59,5 +58,20 @@ class PredictorTest {
         assertThat(predictions.size(), is(2));
         assertThat(predictions.get("C"), is(0.5));
         assertThat(predictions.get("D"), is(0.5));
+    }
+
+    @Test
+    void bigPredictionTree() {
+        Predictor<Integer> predictor = new Predictor<>();
+        List<Sequence<Integer>> trainingSet = Arrays.asList(
+                new Sequence<>(IntStream.range(1, 1000).boxed().toArray(Integer[]::new)),
+                new Sequence<>(IntStream.range(512, 5000).boxed().toArray(Integer[]::new)),
+                new Sequence<>(IntStream.range(12, 997).boxed().toArray(Integer[]::new))
+        );
+        predictor.addTrainingSequences(trainingSet);
+        Map<Integer, Double> predictions = predictor.predict(
+                new Sequence<>(990, 991, 992, 993, 994, 995, 996, 997, 998));
+        assertThat(predictions.size(), is(1));
+        assertThat(predictions.get(999), is(1.0));
     }
 }
