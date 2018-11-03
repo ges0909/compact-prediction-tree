@@ -1,4 +1,4 @@
-package infinit.prediction.tests;
+package infinit.prediction;
 
 import infinit.prediction.Predictor;
 import infinit.prediction.Sequence;
