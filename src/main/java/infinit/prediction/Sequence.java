@@ -6,29 +6,22 @@ import java.util.List;
 
 public class Sequence<T> {
 
-    private List<T> symbols;
+    private List<T> symbols; // use linked list because of frequent insertions at beginning
+
 
     public Sequence() {
-        symbols = new LinkedList<>();
+        this.symbols = new LinkedList<>();
     }
 
     public Sequence(T... symbols) {
         this.symbols = new LinkedList<>(Arrays.asList(symbols));
     }
 
-    List<T> getSymbols() {
+    public List<T> getSymbols() {
         return symbols;
     }
 
-    public boolean isEmpty() {
-        return this.symbols.isEmpty();
-    }
-
-    public T getSymbol(int index) {
-        return symbols.get(index);
-    }
-
-    void insert(T symbol) {
+    public void insert(T symbol) {
         symbols.add(0, symbol);
     }
 }

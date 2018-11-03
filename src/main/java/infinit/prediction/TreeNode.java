@@ -9,7 +9,7 @@ public class TreeNode<T> {
     private List<TreeNode<T>> children;
     private T symbol;
 
-    TreeNode() {
+    public TreeNode() {
         parent = null;
         children = new ArrayList<>();
         symbol = null;
@@ -24,11 +24,11 @@ public class TreeNode<T> {
         return parent == null;
     }
 
-    TreeNode<T> getParent() {
+    public TreeNode<T> getParent() {
         return parent;
     }
 
-    void setParent(TreeNode<T> parent) {
+    public void setParent(TreeNode<T> parent) {
         this.parent = parent;
     }
 
