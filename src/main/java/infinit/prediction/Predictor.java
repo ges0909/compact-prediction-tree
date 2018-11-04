@@ -64,20 +64,20 @@ public class Predictor<T> {
             branches.add(branch);
         }
         // find 1st occurrence of test sequence in branches
-        Map<T, Double> predictions = new HashMap<>();
+        Map<T, Integer> predictions = new HashMap<>();
         for (List<T> branch : branches) {
             int startIdx = Collections.indexOfSubList(branch, testSequence.getSymbols());
             if (startIdx > -1 /*found*/) {
                 int behindIdx = startIdx + testSequence.getSymbols().size();
                 if (behindIdx < branch.size()) {
                     T symbol = branch.get(behindIdx);
-                    predictions.putIfAbsent(symbol, 0d /*initialize counter*/);
-                    predictions.computeIfPresent(symbol, (s, v) -> v + 1d /*increment counter*/);
+                    predictions.putIfAbsent(symbol, 0 /*initialize counter*/);
+                    predictions.computeIfPresent(symbol, (s, v) -> v + 1 /*increment counter*/);
                 }
             }
         }
-        // recalculate counters to scores
-        double sum = predictions.values().stream().mapToDouble(Double::doubleValue).sum();
+        // calculate scores
+        double sum = predictions.values().stream().mapToInt(Integer::intValue).sum();
         return predictions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue() / sum));
     }
 }
