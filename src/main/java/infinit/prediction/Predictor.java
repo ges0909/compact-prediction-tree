@@ -20,21 +20,22 @@ public class Predictor<T> {
     }
 
     private void train(Sequence<T> sequence) {
-        int uniqueSequenceId = lookupTable.size(); // is used as index for lookup table, therefore has to start with 0
+        int sequenceIndex = lookupTable.size(); // give each training sequence an unique id to use as index
         // add training sequence to prediction tree
-        TreeNode<T> lastNode = addTrainingSequence(sequence);
-        // store mapping symbol to sequences containing it
+        TreeNode<T> lastNode = addSequenceToPredictionTree(sequence);
+        // store mapping symbol -> sequences containing it
         for (T symbol : sequence.getSymbols()) {
             invertedIndex.putIfAbsent(symbol, new HashSet<>());
-            invertedIndex.get(symbol).add(uniqueSequenceId);
+            invertedIndex.get(symbol).add(sequenceIndex);
         }
         // store last prediction tree node in lookup table
-        lookupTable.put(uniqueSequenceId, lastNode);
+        lookupTable.put(sequenceIndex, lastNode);
     }
 
-    private TreeNode<T> addTrainingSequence(Sequence<T> sequence) {
+    private TreeNode<T> addSequenceToPredictionTree(Sequence<T> sequence) {
         TreeNode<T> node = predictionTree;
         for (T symbol : sequence.getSymbols())
+            // if symbol not found in children then add new child to node
             node = find(node, symbol).orElse(new TreeNode<>(node, symbol));
         return node;
     }
@@ -55,10 +56,10 @@ public class Predictor<T> {
         Set<Integer> similarSequenceIndexes = new HashSet<>();
         for (T symbol : uniqueTestSymbols) similarSequenceIndexes.addAll(invertedIndex.get(symbol));
         // traverse prediction tree from bottom to top to collect branches containing test sequence potentially
-        List<List<T>> branches = new LinkedList<>();
-        for (Integer sequenceId : similarSequenceIndexes) {
+        List<List<T>> branches = new ArrayList<>();
+        for (Integer sequenceIndex : similarSequenceIndexes) {
             List<T> branch = new LinkedList<>();
-            for (TreeNode<T> node = lookupTable.get(sequenceId); !node.isRoot(); node = node.getParent())
+            for (TreeNode<T> node = lookupTable.get(sequenceIndex); !node.isRoot(); node = node.getParent())
                 branch.add(0, node.getSymbol());
             branches.add(branch);
         }
@@ -75,7 +76,7 @@ public class Predictor<T> {
                 }
             }
         }
-        // transform counters to scores
+        // recalculate counters to scores
         double sum = predictions.values().stream().mapToDouble(Double::doubleValue).sum();
         return predictions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue() / sum));
     }
