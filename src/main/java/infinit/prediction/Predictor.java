@@ -15,26 +15,26 @@ public class Predictor<T> {
         lookupTable = new HashMap<>();
     }
 
-    public void train(List<Sequence<T>> sequences) {
-        sequences.forEach(this::train);
+    public void train(List<Sequence<T>> trainingSequences) {
+        trainingSequences.forEach(this::train);
     }
 
-    private void train(Sequence<T> sequence) {
+    private void train(Sequence<T> trainingSequence) {
         int sequenceIndex = lookupTable.size(); // give each training sequence an unique id to use as index
-        // add training sequence to prediction tree
-        TreeNode<T> lastNode = addSequenceToPredictionTree(sequence);
-        // store mapping symbol -> sequences containing it
-        for (T symbol : sequence.getSymbols()) {
+        // 1. add training sequence to prediction tree
+        TreeNode<T> lastNode = addSequenceToPredictionTree(trainingSequence);
+        // 2. store in inverted index the mapping "symbol -> sequences containing symbol"
+        for (T symbol : trainingSequence.getSymbols()) {
             invertedIndex.putIfAbsent(symbol, new HashSet<>());
             invertedIndex.get(symbol).add(sequenceIndex);
         }
-        // store last prediction tree node in lookup table
+        // 3. store in lookup table the mapping "sequence -> bottom tree node"
         lookupTable.put(sequenceIndex, lastNode);
     }
 
-    private TreeNode<T> addSequenceToPredictionTree(Sequence<T> sequence) {
+    private TreeNode<T> addSequenceToPredictionTree(Sequence<T> trainingSequence) {
         TreeNode<T> node = predictionTree;
-        for (T symbol : sequence.getSymbols())
+        for (T symbol : trainingSequence.getSymbols())
             // if symbol not found in children then add new child to node
             node = find(node, symbol).orElse(new TreeNode<>(node, symbol));
         return node;
@@ -63,7 +63,7 @@ public class Predictor<T> {
                 branch.add(0, node.getSymbol());
             branches.add(branch);
         }
-        // find first occurrence of test sequence in branches
+        // find 1st occurrence of test sequence in branches
         Map<T, Double> predictions = new HashMap<>();
         for (List<T> branch : branches) {
             int startIdx = Collections.indexOfSubList(branch, testSequence.getSymbols());
