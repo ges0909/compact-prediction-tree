@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static infinit.prediction.Predictor.Mode.DETERMINISTIC;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -23,7 +24,7 @@ class PredictorTest {
                 new Sequence<>(0, 9, 8, 7, 6, 5, 4)
         );
         predictor.train(trainingSet);
-        Map<Integer, Double> predictions = predictor.predict(new Sequence<>(2, 1, 1, 1));
+        Map<Integer, Double> predictions = predictor.predict(DETERMINISTIC, new Sequence<>(2, 1, 1, 1));
         assertThat(predictions.get(1), greaterThan(0.33));
         assertThat(predictions.get(3), greaterThan(0.66));
     }
@@ -37,7 +38,7 @@ class PredictorTest {
                 new Sequence<>("C", "D", "F")
         );
         predictor.train(trainingSet);
-        Map<String, Double> predictions = predictor.predict(new Sequence<>("C", "D"));
+        Map<String, Double> predictions = predictor.predict(DETERMINISTIC, new Sequence<>("C", "D"));
         assertThat(predictions.size(), is(2));
         assertThat(predictions.get("E"), is(0.5));
         assertThat(predictions.get("F"), is(0.5));
@@ -54,7 +55,7 @@ class PredictorTest {
                 new Sequence<>("B", "D", "E")
         );
         predictor.train(trainingSet);
-        Map<String, Double> predictions = predictor.predict(new Sequence<>("A", "B"));
+        Map<String, Double> predictions = predictor.predict(DETERMINISTIC, new Sequence<>("A", "B"));
         assertThat(predictions.size(), is(2));
         assertThat(predictions.get("C"), is(0.5));
         assertThat(predictions.get("D"), is(0.5));
@@ -69,7 +70,7 @@ class PredictorTest {
                 new Sequence<>(IntStream.range(12, 997).boxed().toArray(Integer[]::new))
         );
         predictor.train(trainingSet);
-        Map<Integer, Double> predictions = predictor.predict(
+        Map<Integer, Double> predictions = predictor.predict(DETERMINISTIC,
                 new Sequence<>(990, 991, 992, 993, 994, 995, 996, 997, 998));
         assertThat(predictions.size(), is(1));
         assertThat(predictions.get(999), is(1.0));
