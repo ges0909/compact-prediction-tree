@@ -49,21 +49,40 @@ public class Predictor<T> {
         return Optional.empty();
     }
 
-    public Map<T, Double> predict(Sequence<T> testSequence) {
+    public Map<T, Double> predict(Mode mode, Sequence<T> testSequence) {
         // find unique symbols of the test sequence
         Set<T> uniqueTestSymbols = new HashSet<>(testSequence.getSymbols());
         // find all training sequences containing the unique symbols of the test sequence (intersection)
         Set<Integer> similarSequenceIndexes = new HashSet<>();
         for (T symbol : uniqueTestSymbols) similarSequenceIndexes.addAll(invertedIndex.get(symbol));
         // traverse prediction tree from bottom to top to collect branches containing test sequence potentially
+        List<List<T>> branches = collectBranches(mode, similarSequenceIndexes);
+        Map<T, Integer> predictions = Collections.emptyMap();
+        if (mode == Mode.DETERMINISTIC)
+            // find 1st occurrence of complete test sequence in branches
+            predictions = findDeterministicPredictions(testSequence, branches);
+        else if (mode == Mode.PROBABILISTIC)
+            predictions = findProbabilisticPredictions(uniqueTestSymbols, branches);
+        // calculate scores
+        double sum = predictions.values().stream().mapToInt(Integer::intValue).sum();
+        return predictions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue() / sum));
+    }
+
+    private List<List<T>> collectBranches(Mode mode, Set<Integer> similarSequenceIndexes) {
         List<List<T>> branches = new ArrayList<>();
         for (Integer sequenceIndex : similarSequenceIndexes) {
             List<T> branch = new LinkedList<>();
             for (TreeNode<T> node = lookupTable.get(sequenceIndex); !node.isRoot(); node = node.getParent())
-                branch.add(0, node.getSymbol());
+                if (mode == Mode.DETERMINISTIC)
+                    branch.add(0, node.getSymbol());
+                else if (mode == Mode.PROBABILISTIC)
+                    branch.add(node.getSymbol());
             branches.add(branch);
         }
-        // find 1st occurrence of test sequence in branches
+        return branches;
+    }
+
+    private Map<T, Integer> findDeterministicPredictions(Sequence<T> testSequence, List<List<T>> branches) {
         Map<T, Integer> predictions = new HashMap<>();
         for (List<T> branch : branches) {
             int startIdx = Collections.indexOfSubList(branch, testSequence.getSymbols());
@@ -76,8 +95,19 @@ public class Predictor<T> {
                 }
             }
         }
-        // calculate scores
-        double sum = predictions.values().stream().mapToInt(Integer::intValue).sum();
-        return predictions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue() / sum));
+        return predictions;
     }
+
+    private Map<T, Integer> findProbabilisticPredictions(Set<T> uniqueTestSymbols, List<List<T>> branches) {
+        Map<T, Integer> predictions = new HashMap<>();
+        for (List<T> branch : branches) {
+//            Collections.reverse(branch);
+            T symbol = branch.stream().filter(uniqueTestSymbols::contains).findFirst().get();
+            predictions.putIfAbsent(symbol, 0 /*initialize counter*/);
+            predictions.computeIfPresent(symbol, (s, v) -> v + 1 /*increment counter*/);
+        }
+        return predictions;
+    }
+
+    public enum Mode {DETERMINISTIC, PROBABILISTIC}
 }
