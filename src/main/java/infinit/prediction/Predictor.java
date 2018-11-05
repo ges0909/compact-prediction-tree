@@ -96,8 +96,13 @@ public class Predictor<T> {
         return predictions;
     }
 
-    private Map<T, Integer> findProbabilisticPredictions(Sequence<T> testSequence, List<List<T>> branches) {
-        return Collections.emptyMap();
+    private Map<T, Integer> findProbabilisticPredictions(Set<T> uniqueTestSymbols, List<List<T>> branches) {
+        Map<T, Integer> predictions = new HashMap<>();
+        for (List<T> branch : branches) {
+            Collections.reverse(branch);
+     //       branch.stream().filter(uniqueTestSymbols::contains).
+        }
+        return predictions;
     }
 
     public enum Mode {DETERMINISTIC, PROBABILISTIC}
